@@ -3,26 +3,6 @@ import matplotlib.pyplot as plt
 import random
 import copy
 
-def make_progression(n, z, c):
-    """
-    Return the n_th iteration of the c-julia progression for the complex z.
-
-    :param n: the last step of the progression
-    :type n: int
-    :parap z: The initial complex term of the progression
-    :type z: complex
-    :param c: The associated constant of the Julia's progression
-    :type c: complex
-    :return: The n_th term of the c-julia progression for the complex z if it modulus is less than two, None else.
-    :rtype: float or None
-
-    """
-    for i in range(n):
-        if modulus(z) >= 2:
-            return None
-        z = z**2 + c
-    return z
-
 def modulus(z):
     """
     Return the modulus of a complex.
@@ -36,27 +16,6 @@ def modulus(z):
     if z == None:
         return None
     return (z.real**2 + z.imag**2)**(1/2).real
-
-def make_julia(n, c):
-    """
-    Return the c-julia trail of n iteration.
-
-    :param n: The number of iteration.
-    :type n: int
-    :param c: The associated constant of the Julia's set.
-    :type c: complex
-    :return: A matrice of complex representing the Julia's set.
-    :rtype: list[list[complex]]
-
-    """
-    julia = []
-    temp = []
-    for l in np.linspace(-2, 2, 4 * 10**2 + 1):
-        for k in np.linspace(-2, 2, 4 * 10**2 + 1):
-            temp.append(modulus(make_progression(n, complex(k, l), c)))
-        julia.insert(0, temp)
-        temp = []
-    return julia
 
 def make_step(z, c):
     """
@@ -134,7 +93,8 @@ def save_plan(julia, name):
     img = plt.imshow(temp)
     plt.axis('off')
     #plt.show()
-    plt.savefig('./pictures/' + name, bbox_inches = 'tight', pad_inches = 0.0)
+    #plt.savefig('./pictures/' + name, bbox_inches = 'tight', pad_inches = 0.0)
+    #envoie à 
     plt.close()
 
 # Some nice constants.
@@ -144,37 +104,10 @@ def save_plan(julia, name):
 #c = 0.285 + 0.01j
 #c = -0.7269 + 0.1889j
 #c = 0.7885
-#c = 0.28+0.008j
+c = 0.28+0.008j
 
 c_random = complex(4 * random.random() - 2, 4 * random.random() - 2)
 
-def main(decimal, step_number, t, constant = c_random):
-    """
-    Make two collection of pictures.
-    The first one are the successiv step of a c-julia.
-    The second one are some of the Julia's trail of complex with same modulus but different argument.
-
-    :param decimal: The number of decimal in each complex.
-    :type decimal: int
-    :param step_number: The number of iteration.
-    :type step_number: int
-    :param t: The number of Julia's trail of the second part.
-    :type t: int
-    :param constant: Optional associated constant of the Julia's. If unspecified, will be a random complex.
-    :type constant: complex
-
-    """
-    plan = make_plan(decimal)
-    mod = modulus(constant)
-    save_plan(plan, '0')
-    print(str(0)+'%')
-    for i in range(step_number):
-        plan = make_julia_step(plan, constant)
-        save_plan(plan, str(i + 1))
-        print(str(i + 1) + '%')
-    # for i in range(t):
-    #     arg = 2 * np.pi / t * i
-    #     save_plan(make_julia(step_number, mod * np.exp(1j * arg)), str(i + step_number))
-    #     print(str(int(i/t*100*100)/100) + '%')
-
-main(3, 100, 100)
+def main(plan, c):
+    save_plan(make_julia_step(plan, c), user_ID)
+    

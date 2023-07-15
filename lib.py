@@ -3,6 +3,23 @@ import matplotlib.pyplot as plt
 import random
 import copy
 
+# Some nice constants.
+
+#c = 0.25+0.5j
+#c = -0.5251993
+#c = 0.285 + 0.01j
+#c = -0.7269 + 0.1889j
+#c = 0.7885
+#c = 0.28+0.008j
+#c = 0.3 + 0.5j
+#c = –1.417022285618 + 0.0099534j
+#c = 0.285 + 0.013j
+#c = 0.8 + 0.2j
+#c = 1
+#c = −0.8 + 0,156j
+
+c_random = complex(4 * random.random() - 2, 4 * random.random() - 2)
+
 def modulus(z):
     """
     Return the modulus of a complex.
@@ -13,8 +30,8 @@ def modulus(z):
     :rtype: float
 
     """
-    if z == None:
-        return None
+    if z == '_':
+        return '_'
     return (z.real**2 + z.imag**2)**(1/2).real
 
 def make_step(z, c):
@@ -26,10 +43,10 @@ def make_step(z, c):
     :param c: The associated constant of the Julia's progression.
     :type c: complex
     :return: The next term of the c-julia progression.
-    :rtype: complex or None
+    :rtype: complex or '_'
 
     """
-    if z != None:
+    if z != '_':
         z = z**2 + c
     return z
 
@@ -52,7 +69,7 @@ def make_plan(decimal):
         temp = []
     return plan
 
-def make_julia_step(julia, c):
+def make_julia_step(julia = make_plan(2), c = c_random):
     """
     Return the next step of an actual c-julia step.
 
@@ -68,11 +85,11 @@ def make_julia_step(julia, c):
     for l in range(len(temp)):
         for k in range(len(temp)):
             temp[l][k] = make_step(temp[l][k], c)
-            if temp[l][k] == None or modulus(temp[l][k]) >= 2:
-                temp[l][k] = None
+            if temp[l][k] == '_' or modulus(temp[l][k]) >= 2:
+                temp[l][k] = '_'
     return temp
 
-def save_plan(julia, name):
+def save_pic(julia, name):
     """
     Make and save the Julia's set with a specified name in ./pictures/ .
 
@@ -85,7 +102,7 @@ def save_plan(julia, name):
     temp = copy.deepcopy(julia)
     for l in range(len(temp)):
         for k in range(len(temp)):
-            if temp[l][k] == None:
+            if temp[l][k] == '_':
                 temp[l][k] = 0
             else:
                 temp[l][k] = modulus(julia[l][k])
@@ -93,21 +110,28 @@ def save_plan(julia, name):
     img = plt.imshow(temp)
     plt.axis('off')
     #plt.show()
-    #plt.savefig('./pictures/' + name, bbox_inches = 'tight', pad_inches = 0.0)
-    #envoie à 
+    plt.savefig(name, bbox_inches = 'tight', pad_inches = 0.0)
     plt.close()
 
-# Some nice constants.
-
-#c = 0.25+0.5j
-#c = -0.5251993
-#c = 0.285 + 0.01j
-#c = -0.7269 + 0.1889j
-#c = 0.7885
-c = 0.28+0.008j
-
-c_random = complex(4 * random.random() - 2, 4 * random.random() - 2)
-
-def main(plan, c):
-    save_plan(make_julia_step(plan, c), user_ID)
+def file_to_plan(user_ID):
+    plan = []
+    file = open('/tmp/' + user_ID + '.plan', 'r')
+    plan = [e.rstrip().split(';') for e in file]
+    for i in plan:
+        for j in range(len(i)):
+            if i[j] != '_':
+                i[j] = complex(i[j])
+    return plan
     
+def plan_to_file(plan, user_ID):
+    file = open('/tmp/' + user_ID + '.plan', 'w')
+    for i in plan:
+        temp = []
+        for j in i:
+            if j == '_':
+                temp.append('_')
+            else:
+                temp.append(str(j))
+        file.write(';'.join(temp) + '\n')
+    file.close
+    return '/tmp/' + user_ID + '.plan'

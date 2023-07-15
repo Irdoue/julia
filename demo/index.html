@@ -26,6 +26,7 @@
       async function requestNewIteration() {
         
         if (currentIteration >= maxIteration) return;
+        currentIteration++;
 
         try {
           const res = await fetch(url + `?user_ID=${userId}&resolution=1&set_ID=${setId}`, { method: 'POST' });

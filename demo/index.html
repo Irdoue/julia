@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <meta>
+      <title>Julia</title>
+    </meta>
+  </head>
+  <body>
+
+    <div class="container">
+      <img id="canvas">
+      <button
+        class="button"
+        onclick="requestNewIteration()">Load</button>  
+    <div>
+
+    <script>
+
+      let currentIteration = 0;
+      const maxIteration = 100;
+      const userId = Math.random().toString(36).substr(2) + Date.now().toString(36);
+      const url = 'https://j3tr7wje07.execute-api.eu-west-3.amazonaws.com/default/julia_lambda';
+
+      const setId = Math.floor(Math.random() * 13);
+
+
+      async function requestNewIteration() {
+        
+        if (currentIteration >= maxIteration) return;
+
+        try {
+          const res = await fetch(url + `?user_ID=${userId}&resolution=1&set_ID=${setId}`, { method: 'POST' });
+          const img = document.getElementById('canvas');
+          img.setAttribute('src', `https://lecompartimentdeirdoue.s3.eu-west-3.amazonaws.com/${userId}.png?random=${new Date().getTime()}`);
+          requestNewIteration();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+    </script>
+
+    <style>
+
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+	      align-items: center;
+      }
+
+      .container {
+	      max-width: 500px;
+      }
+
+      img {
+	      border-radius: 4px;
+        width: 100%;
+        max-height: 500px;
+      }
+
+      .button {
+	      cursor: pointer;
+        margin-top: 12px;
+        width: 100%;
+        color: black;
+        padding: 6px 12px;
+        background-color: white;
+        border: 1px solid gray;
+        border-radius: 4px;
+      }
+
+      .button:hover {
+	      background-color: lightgray;
+      }
+    </style>
+
+  </body>
+</html>

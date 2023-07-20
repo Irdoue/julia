@@ -8,37 +8,39 @@
 
     <div class="container">
       <img id="canvas">
-      <button
-        class="button"
-        onclick="requestNewIteration()">Load</button>  
     <div>
 
     <script>
-
       let currentIteration = 0;
       const maxIteration = 100;
       const userId = Math.random().toString(36).substr(2) + Date.now().toString(36);
+
       const url = 'https://j3tr7wje07.execute-api.eu-west-3.amazonaws.com/default/julia_lambda';
 
       const setId = Math.floor(Math.random() * 13);
-
+      const constants = [['0.25', '0.5'], ['0.285', '0.01'], ['-0.7269', '0.1889'], ['0.28', '0.008'], ['0.3', '0.5'], ['0.285', '0.013'], ['-0.01', '0'], ['-0.8' + '0.156']];
+      const juliaConstant = constants[Math.floor(Math.random()*constants.length)];
 
       async function requestNewIteration() {
         
         if (currentIteration >= maxIteration) return;
         currentIteration++;
-
+        
         try {
-          const res = await fetch(url + `?user_ID=${userId}&resolution=1&set_ID=${setId}`, { method: 'POST' });
-          const img = document.getElementById('canvas');
+          const res = await fetch(url + `?user_ID=${userId}&resolution=${2}&realPart=${juliaConstant[0]}&imagPart=${juliaConstant[1]}`, { method: 'POST' });
+          const img = document.getElementById(`canvas`);
           img.setAttribute('src', `https://lecompartimentdeirdoue.s3.eu-west-3.amazonaws.com/${userId}.png?random=${new Date().getTime()}`);
           requestNewIteration();
         } catch (err) {
           console.error(err);
         }
       }
-
+      window.addEventListener("load", () => {requestNewIteration()});
+      
     </script>
+    <p>
+      Ici une description du site.
+    </p>
 
     <style>
 
@@ -61,20 +63,6 @@
         max-height: 500px;
       }
 
-      .button {
-	      cursor: pointer;
-        margin-top: 12px;
-        width: 100%;
-        color: black;
-        padding: 6px 12px;
-        background-color: white;
-        border: 1px solid gray;
-        border-radius: 4px;
-      }
-
-      .button:hover {
-	      background-color: lightgray;
-      }
     </style>
 
   </body>
